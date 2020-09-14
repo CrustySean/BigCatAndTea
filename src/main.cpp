@@ -40,11 +40,8 @@ void BCATinstaller()
 
   }
 }
-
-void BCATbackupper()
-{
-    
-
+  
+  
 int main(int argc, char **argv)
 {
     consoleInit(NULL);
