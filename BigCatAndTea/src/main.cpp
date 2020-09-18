@@ -4,6 +4,7 @@
 #include <fstream>
 #include <memory>
 #include <filesystem>
+#include <vector>
 #include <switch.h>
 
 void printInfo()
@@ -11,6 +12,7 @@ void printInfo()
     printf("BigCatAndTea give you a warm welcome!\n\n");
 
     printf("Y : Install BCAT News (from sdmc:/bcat)\n");
+    printf("X : Backup BCAT news\n");
     printf("+ : Exit\n");
 }
 
@@ -39,6 +41,40 @@ void BCATinstaller()
     };
 
   }
+}
+
+void BackupBCAT()
+{
+    Result rc = 0;
+    NewsDatabaseService db;
+    std::vector<BackupBCAT> archives;
+    /* Open database service. */
+    if (R_SUCCEEDED(rc = newsCreateNewsDatabaseService(&db))) {
+        do {
+            /* Count entries. */
+            u32 count = 0;
+            if (R_FAILED(rc = newsDatabaseCount(&db, "", &count)))
+                break;
+
+            /* Read records. */
+            u32 records_read = 0;
+            std::vector<NewsRecord> records(count);
+            if (R_FAILED(rc = newsDatabaseGetList(&db, records.data(), count, "", "", &records_read, 0)))
+                break;
+            } while (false);
+
+        /* Close service. */
+        newsDatabaseClose(&db);
+    }
+
+    if (R_FAILED(rc)) {
+        printf("Failed to open BCAT\n", rc);
+    } else {
+        printf("Successfully opened BCAT\n", rc);
+    }
+
+    return archives;
+
 }
 
 int main(int argc, char **argv)
