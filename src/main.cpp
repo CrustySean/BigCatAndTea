@@ -12,7 +12,6 @@
 void printInfo()
 {
     printf("BigCatAndTea give you a warm welcome!\n\n");
-
     printf("+ : Exit\n");
 }
 
@@ -44,11 +43,10 @@ void BCATinstaller()
 }
 
 
-std::vector<NewsArchive> NewsManager::GetNewsFromRemote()
+void BackupNews()
 {
     Result rc = 0;
     NewsDatabaseService db;
-    std::vector<NewsArchive> archives;
     
     /* Open database service. */
     if (R_SUCCEEDED(rc = newsCreateNewsDatabaseService(&db))) {
@@ -88,7 +86,7 @@ std::vector<NewsArchive> NewsManager::GetNewsFromRemote()
                     if (R_FAILED(rc = newsDataRead(&data, &bytes_read, 0, buffer.data(), buffer.size())))
                         break;
 
-                    archives.emplace_back(record.news_id, std::move(buffer));
+                    //archives.emplace_back(record.news_id, std::move(buffer));
                 } while (false);
 
                 if (R_FAILED(rc))
@@ -105,8 +103,6 @@ std::vector<NewsArchive> NewsManager::GetNewsFromRemote()
     if (R_FAILED(rc)) {
         printf("Failed to retreive remote news: 0x%x\n", rc);
     }
-
-    return archives;
 }
 
 int main(int argc, char **argv)
@@ -129,6 +125,7 @@ int main(int argc, char **argv)
 
         if (kDown & KEY_PLUS) break;
         if (kDown & KEY_Y) BCATinstaller();
+        if (kDown & KEY_X) BackupNews();
         consoleUpdate(NULL);
     }
 
