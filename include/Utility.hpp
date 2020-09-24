@@ -15,14 +15,7 @@ private:
     std::vector<u8> m_data;
 public:
     NewsArchive(std::string name, std::vector<u8> &&data);
-    void NewsBackup();
-};
-
-class NewsManager
-{
-    public:
-
     Result Install(NewsArchive* archive);
-};    
+    ObjectNews.BackupNews();
 
- 
+};

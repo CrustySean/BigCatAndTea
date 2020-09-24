@@ -13,7 +13,6 @@
 void printInfo()
 {
     printf("BigCatAndTea give you a warm welcome!\n\n");
-    printf(" \n"); // make some space between text
     printf("X : Backup News(IMPORTANT!)\n");
     printf("Y : Install News found in sdmc:/bcat\n");
     printf("+ : Exit\n");
@@ -53,7 +52,8 @@ void BCATinstaller()
     return rc;
 }*/
 
-void NewsArchive::NewsBackup()
+
+void BackupNews()
 {
     Result rc = 0;
     NewsDatabaseService db;
@@ -114,16 +114,16 @@ void NewsArchive::NewsBackup()
     }
 
     if (R_FAILED(rc)) {
-        printf("Failed to retreive remote news: 0x%x\n", rc);
+        printf("Failed to make a backup of news: 0x%x\n", rc);
     } else {
-        printf("Heh we actually did it\n", rc);
+        printf("Successfully made a backup of the news!\n", rc);
     }
 }
-
 
 int main(int argc, char **argv)
 {
     consoleInit(NULL);
+    NewsArchive ObjectNews;
 
     Result rc = newsInitialize(NewsServiceType_Administrator);
     if (R_FAILED(rc)) {
@@ -141,6 +141,7 @@ int main(int argc, char **argv)
 
         if (kDown & KEY_PLUS) break;
         if (kDown & KEY_Y) BCATinstaller();
+        if (kDown & KEY_X) ObjectNews.BackupNews();
         consoleUpdate(NULL);
     }
 
