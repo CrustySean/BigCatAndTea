@@ -16,6 +16,5 @@ private:
 public:
     NewsArchive(std::string name, std::vector<u8> &&data);
     Result Install(NewsArchive* archive);
-    ObjectNews.BackupNews();
 
 };

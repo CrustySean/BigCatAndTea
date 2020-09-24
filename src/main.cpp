@@ -10,6 +10,7 @@
 
 #include <Utility.hpp>
 
+
 void printInfo()
 {
     printf("BigCatAndTea give you a warm welcome!\n\n");
@@ -52,9 +53,14 @@ void BCATinstaller()
     return rc;
 }*/
 
+NewsArchive::NewsArchive(std::string name, std::vector<u8> &&data)
+    : m_name(name), m_data(std::move(data))
+{
+}
 
 void BackupNews()
 {
+
     Result rc = 0;
     NewsDatabaseService db;
     std::vector<NewsArchive> archives;
@@ -99,6 +105,8 @@ void BackupNews()
                         break;
 
                     archives.emplace_back(record.news_id, std::move(buffer)); // here is is our msgpack
+
+    
                 } while (false);
 
                 if (R_FAILED(rc))
@@ -122,8 +130,11 @@ void BackupNews()
 
 int main(int argc, char **argv)
 {
+    /*DIR* news_dir = opendir("sdmc:/NewsBackup");
+	if (news_dir == NULL) mkdir("sdmc:/NewsBackup");
+	else closedir(news_dir);*/
+
     consoleInit(NULL);
-    NewsArchive ObjectNews;
 
     Result rc = newsInitialize(NewsServiceType_Administrator);
     if (R_FAILED(rc)) {
@@ -141,7 +152,7 @@ int main(int argc, char **argv)
 
         if (kDown & KEY_PLUS) break;
         if (kDown & KEY_Y) BCATinstaller();
-        if (kDown & KEY_X) ObjectNews.BackupNews();
+        if (kDown & KEY_X) BackupNews();
         consoleUpdate(NULL);
     }
 
