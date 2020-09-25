@@ -105,7 +105,20 @@ void BackupNews()
                         break;
 
                     archives.emplace_back(record.news_id, std::move(buffer)); // here is is our msgpack
-
+                    FILE *fp = fopen("sdmc:/NewsBackup/my.msgpack", "wb");
+                    if (!fp);
+                    if (R_FAILED(rc)) {
+                        printf("Failed to open the msgpack\n", rc);
+                    } else {
+                        printf("Succcessfully opened the msgpack\n");
+                    }
+                    fwrite(buffer.data(), buffer.size(), 1, fp);
+                    if (R_FAILED(rc)) {
+                        printf("Failed to write buffer to the msgpack\n", rc);
+                    } else {
+                        printf("Successfully written buffer to the msgpack\n");
+                    }
+                    fclose(fp);
     
                 } while (false);
 
@@ -124,7 +137,7 @@ void BackupNews()
     if (R_FAILED(rc)) {
         printf("Failed to make a backup of news: 0x%x\n", rc);
     } else {
-        printf("Successfully made a backup of the news!\n", rc);
+        printf("Successfully made a backup of the news!\n");
     }
 }
 
