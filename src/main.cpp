@@ -104,16 +104,17 @@ void BackupNews()
                     if (R_FAILED(rc = newsDataRead(&data, &bytes_read, 0, buffer.data(), buffer.size())))
                         break;
 
-                    archives.emplace_back(record.news_id, std::move(buffer)); // here is is our msgpack
+                    archives.emplace_back(record.news_id, buffer); // here is is our msgpack
+
                     FILE *fp = fopen("sdmc:/NewsBackup/my.msgpack", "wb");
-                    if (!fp);
-                    if (R_FAILED(rc)) {
-                        printf("Failed to open the msgpack\n", rc);
+                    if (fp == nullptr) {
+                    printf("Failed to open the msgpack\n", rc);
+                    return;
                     } else {
                         printf("Succcessfully opened the msgpack\n");
                     }
-                    fwrite(buffer.data(), buffer.size(), 1, fp);
-                    if (R_FAILED(rc)) {
+                    uint32_t bytesWritten = fwrite(buffer.data(), 1, buffer.size(), fp);
+                    if (bytesWritten != buffer.size()) {
                         printf("Failed to write buffer to the msgpack\n", rc);
                     } else {
                         printf("Successfully written buffer to the msgpack\n");
