@@ -104,18 +104,18 @@ void BackupNews()
                     if (R_FAILED(rc = newsDataRead(&data, &bytes_read, 0, buffer.data(), buffer.size())))
                         break;
 
-                    archives.emplace_back(record.news_id, buffer); // here is is our msgpack
+                    archives.emplace_back(record.news_id, std::move(buffer)); // here is is our msgpack
 
                     FILE *fp = fopen("sdmc:/NewsBackup/my.msgpack", "wb");
-                    if (fp == nullptr) {
-                    printf("Failed to open the msgpack\n", rc);
-                    return;
+                    /*if (fp == nullptr) {
+                    printf("Failed to open the msgpack\n");
+                    break;
                     } else {
                         printf("Succcessfully opened the msgpack\n");
-                    }
+                    }*/
                     uint32_t bytesWritten = fwrite(buffer.data(), 1, buffer.size(), fp);
                     if (bytesWritten != buffer.size()) {
-                        printf("Failed to write buffer to the msgpack\n", rc);
+                        printf("Failed to write buffer to the msgpack\n");
                     } else {
                         printf("Successfully written buffer to the msgpack\n");
                     }
@@ -165,6 +165,7 @@ int main(int argc, char **argv)
         u64 kDown = hidKeysDown(CONTROLLER_P1_AUTO);
 
         if (kDown & KEY_PLUS) break;
+        if (kDown & KEY_B) break;
         if (kDown & KEY_Y) BCATinstaller();
         if (kDown & KEY_X) BackupNews();
         consoleUpdate(NULL);
