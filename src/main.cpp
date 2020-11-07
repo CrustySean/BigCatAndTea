@@ -8,8 +8,7 @@
 #include <iostream>
 #include <switch.h>
 
-#include <Utility.hpp>
-
+#include <utility.hpp>
 
 void printInfo()
 {
@@ -45,13 +44,6 @@ void BCATinstaller()
 
     }
 }
-
-/*Result NewsManager::Install(NewsArchive* archive)
-{
-    Result rc;
-    
-    return rc;
-}*/
 
 NewsArchive::NewsArchive(std::string name, std::vector<u8> &&data)
     : m_name(name), m_data(std::move(data))
@@ -103,23 +95,35 @@ void BackupNews()
                     std::vector<u8> buffer(archiveSize);
                     if (R_FAILED(rc = newsDataRead(&data, &bytes_read, 0, buffer.data(), buffer.size())))
                         break;
-
+                        
                     archives.emplace_back(record.news_id, std::move(buffer)); // here is is our msgpack
+                    // size_t newsSize = sizeof(buffer->news);
 
-                    FILE *fp = fopen("sdmc:/NewsBackup/my.msgpack", "wb");
-                    /*if (fp == nullptr) {
+                    char formatted_name[0x100] = {};
+                    snprintf(formatted_name, std::size(formatted_name), "sdmc:/NewsBackup/%s.msgpack", record.news_id);
+
+                    printf("writing %s...\n", formatted_name);
+                    std::ofstream outnews (formatted_name, std::ofstream::binary);
+                    outnews.write(reinterpret_cast<char*>(buffer.data()), buffer.size());
+                    outnews.close();
+
+                    /*FILE *fp = fopen("sdmc:/NewsBackup/%s.msgpack", "wb");
+                    
+                    if (fp == nullptr) {
                     printf("Failed to open the msgpack\n");
                     break;
                     } else {
                         printf("Succcessfully opened the msgpack\n");
-                    }*/
+                    }
+
                     uint32_t bytesWritten = fwrite(buffer.data(), 1, buffer.size(), fp);
                     if (bytesWritten != buffer.size()) {
                         printf("Failed to write buffer to the msgpack\n");
                     } else {
                         printf("Successfully written buffer to the msgpack\n");
                     }
-                    fclose(fp);
+                    fclose(fp);*/
+                    
     
                 } while (false);
 
@@ -128,6 +132,7 @@ void BackupNews()
 
                 newsDataClose(&data);
             }
+
         } while (false);
 
         /* Close service. */
@@ -144,9 +149,6 @@ void BackupNews()
 
 int main(int argc, char **argv)
 {
-    /*DIR* news_dir = opendir("sdmc:/NewsBackup");
-	if (news_dir == NULL) mkdir("sdmc:/NewsBackup");
-	else closedir(news_dir);*/
 
     consoleInit(NULL);
 
