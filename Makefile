@@ -33,7 +33,7 @@ include $(DEVKITPRO)/libnx/switch_rules
 
 APP_TITLE	:=	BigCatAndTea
 APP_AUTHOR	:=	CrustySeanPro & Behemoth
-APP_VERSION	:=	1.0.0
+APP_VERSION	:=	1.1.0
 
 TARGET		:=	$(notdir $(CURDIR))
 BUILD		:=	build
@@ -53,7 +53,7 @@ CFLAGS	:=	-g -Wall -O2 -ffunction-sections \
 
 CFLAGS	+=	$(INCLUDE) -D__SWITCH__
 
-CXXFLAGS	:= $(CFLAGS) -fno-rtti -fno-exceptions -std=c++17
+CXXFLAGS	:= $(CFLAGS) -fno-rtti -fno-exceptions -fexceptions -std=c++17
 
 ASFLAGS	:=	-g $(ARCH)
 LDFLAGS	=	-specs=$(DEVKITPRO)/libnx/switch.specs -g $(ARCH) -Wl,-Map,$(notdir $*.map)
