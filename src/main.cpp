@@ -14,7 +14,7 @@ void printInfo()
 {
     printf("BigCatAndTea give you a warm welcome!\n\n");
     printf("X : Backup News(IMPORTANT!)\n");
-    printf("Y : Install News found in sdmc:/bcat\n");
+    printf("Y : Install News found in sdmc:/News\n");
     printf("+ : Exit\n");
 }
 
