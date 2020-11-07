@@ -95,8 +95,6 @@ void BackupNews()
                     std::vector<u8> buffer(archiveSize);
                     if (R_FAILED(rc = newsDataRead(&data, &bytes_read, 0, buffer.data(), buffer.size())))
                         break;
-                        
-                    archives.emplace_back(record.news_id, std::move(buffer)); // here is is our msgpack
                     // size_t newsSize = sizeof(buffer->news);
 
                     char formatted_name[0x100] = {};
@@ -106,6 +104,7 @@ void BackupNews()
                     std::ofstream outnews (formatted_name, std::ofstream::binary);
                     outnews.write(reinterpret_cast<char*>(buffer.data()), buffer.size());
                     outnews.close();
+                    archives.emplace_back(record.news_id, std::move(buffer)); // here is is our msgpack
 
                     /*FILE *fp = fopen("sdmc:/NewsBackup/%s.msgpack", "wb");
                     
