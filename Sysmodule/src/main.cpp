@@ -7,28 +7,21 @@
 
 #include <switch.h>
 
+extern "C" {
+    extern u32 __start__;
 
-u32 __nx_applet_type = AppletType_None;
+    u32 __nx_applet_type = AppletType_None;
 
-u32 __nx_fs_num_sessions = 1;
+    #define INNER_HEAP_SIZE 0x18000
+    size_t nx_inner_heap_size = INNER_HEAP_SIZE;
+    char   nx_inner_heap[INNER_HEAP_SIZE];
 
-#define INNER_HEAP_SIZE 0x80000
-size_t nx_inner_heap_size = INNER_HEAP_SIZE;
-char   nx_inner_heap[INNER_HEAP_SIZE];
-
-void __libnx_initheap(void)
-{
-	void*  addr = nx_inner_heap;
-	size_t size = nx_inner_heap_size;
-
-	extern char* fake_heap_start;
-	extern char* fake_heap_end;
-
-	fake_heap_start = (char*)addr;
-	fake_heap_end   = (char*)addr + size;
+    void __libnx_initheap(void);
+    void __appInit(void);
+    void __appExit(void);
 }
 
-void __attribute__((weak)) __appInit(void)
+void __appInit(void)
 {
     Result rc;
 
@@ -47,9 +40,9 @@ void __attribute__((weak)) __appInit(void)
     fsdevMountSdmc();
 }
 
-void __attribute__((weak)) userAppExit(void);
+void userAppExit(void);
 
-void __attribute__((weak)) __appExit(void)
+void __appExit(void)
 {
     fsdevUnmountAll();
     fsExit();
