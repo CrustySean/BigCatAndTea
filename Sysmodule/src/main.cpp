@@ -21,6 +21,18 @@ extern "C" {
     void __appExit(void);
 }
 
+void __libnx_initheap(void)
+{
+	void*  addr = nx_inner_heap;
+	size_t size = nx_inner_heap_size;
+
+	extern char* fake_heap_start;
+	extern char* fake_heap_end;
+
+	fake_heap_start = (char*)addr;
+	fake_heap_end   = (char*)addr + size;
+}
+
 void __appInit(void)
 {
     Result rc;
