@@ -7,31 +7,30 @@
 
 #include <switch.h>
 
+#include "log.hpp"
+
 extern "C" {
-    extern u32 __start__;
+extern u32 __start__;
 
-    u32 __nx_applet_type = AppletType_None;
+u32 __nx_applet_type = AppletType_None;
+// u32 __nx_fs_num_sessions = 1;
 
-    #define INNER_HEAP_SIZE 0x18000
-    size_t nx_inner_heap_size = INNER_HEAP_SIZE;
-    char   nx_inner_heap[INNER_HEAP_SIZE];
+#define INNER_HEAP_SIZE 0x1000000
+size_t nx_inner_heap_size = INNER_HEAP_SIZE;
+char nx_inner_heap[INNER_HEAP_SIZE];
 
-    void __libnx_initheap(void);
-    void __appInit(void);
-    void __appExit(void);
+void __libnx_initheap(void);
+void __appInit(void);
+void __appExit(void);
 }
 
-void __libnx_initheap(void)
-{
-	void*  addr = nx_inner_heap;
-	size_t size = nx_inner_heap_size;
-
-	extern char* fake_heap_start;
-	extern char* fake_heap_end;
-
-	fake_heap_start = (char*)addr;
-	fake_heap_end   = (char*)addr + size;
+void __libnx_initheap(void) {
+    extern char* fake_heap_start;
+    extern char* fake_heap_end;
+    fake_heap_start = nx_inner_heap;
+    fake_heap_end = nx_inner_heap + sizeof(nx_inner_heap);
 }
+
 
 void __appInit(void)
 {
@@ -50,12 +49,15 @@ void __appInit(void)
         fatalThrow(MAKERESULT(Module_Libnx, LibnxError_InitFail_FS));
 
     fsdevMountSdmc();
+
+    debugInit();
 }
 
 void userAppExit(void);
 
 void __appExit(void)
 {
+    debugExit();
     fsdevUnmountAll();
     fsExit();
     newsExit();
@@ -64,6 +66,7 @@ void __appExit(void)
 
 int main(int argc, char* argv[])
 {
+    LOG("main start");
 
     std::error_code res;
     for (auto &&entry : std::filesystem::directory_iterator("sdmc:/News", res)) {
@@ -76,7 +79,12 @@ int main(int argc, char* argv[])
       std::ifstream ifs(entry.path());
       ifs.read(buffer.get(), file_size);
 
-      newsPostLocalNews(buffer.get(), file_size);
+      Result rc = newsPostLocalNews(buffer.get(), file_size);
+      if (R_FAILED(rc))
+      LOG("Failed to post the news");
 
     }
+
+    LOG("main exit");
+    return 0;
 }
