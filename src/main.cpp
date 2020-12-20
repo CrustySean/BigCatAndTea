@@ -142,16 +142,19 @@ int main(int argc, char **argv)
     
     printInfo();
 
-    while(appletMainLoop())
-    {
-        hidScanInput();
-        u64 kDown = hidKeysDown(CONTROLLER_P1_AUTO);
-
-        if (kDown & KEY_PLUS) break;
-        if (kDown & KEY_B) break;
-        if (kDown & KEY_Y) BCATinstaller();
-        if (kDown & KEY_X) BackupNews();
-
+    PadState pad;
+    padConfigureInput(1, HidNpadStyleSet_NpadStandard);
+    padInitializeDefault(&pad);
+    while (appletMainLoop()) {
+        padUpdate(&pad);
+        if (padGetButtonsDown(&pad) & HidNpadButton_Plus)
+            break;
+        if (padGetButtonsDown(&pad) & HidNpadButton_B)
+            break;
+        if (padGetButtonsDown(&pad) & HidNpadButton_Y)
+            BCATinstaller();
+        if (padGetButtonsDown(&pad) & HidNpadButton_X)
+            BackupNews();
         consoleUpdate(NULL);
     }
 
