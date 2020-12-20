@@ -7,14 +7,17 @@
 #include <vector>
 #include <iostream>
 #include <switch.h>
+#include <curl/curl.h>
 
 #include <utility.hpp>
+#include <downloader.hpp>
 
 void printInfo()
 {
     printf("BigCatAndTea give you a warm welcome!\n\n");
     printf("X : Backup News(IMPORTANT!)\n");
     printf("Y : Install News found in sdmc:/bcat\n");
+    // printf("- : Download Files\n");
     printf("+ : Exit\n");
 }
 
@@ -105,25 +108,7 @@ void BackupNews()
                     outnews.write(reinterpret_cast<char*>(buffer.data()), buffer.size());
                     outnews.close();
                     archives.emplace_back(record.news_id, std::move(buffer)); // here is is our msgpack
-
-                    /*FILE *fp = fopen("sdmc:/NewsBackup/%s.msgpack", "wb");
                     
-                    if (fp == nullptr) {
-                    printf("Failed to open the msgpack\n");
-                    break;
-                    } else {
-                        printf("Succcessfully opened the msgpack\n");
-                    }
-
-                    uint32_t bytesWritten = fwrite(buffer.data(), 1, buffer.size(), fp);
-                    if (bytesWritten != buffer.size()) {
-                        printf("Failed to write buffer to the msgpack\n");
-                    } else {
-                        printf("Successfully written buffer to the msgpack\n");
-                    }
-                    fclose(fp);*/
-                    
-    
                 } while (false);
 
                 if (R_FAILED(rc))
@@ -146,6 +131,14 @@ void BackupNews()
     }
 }
 
+/*
+void Download()
+{
+    Downloader* files = new Downloader();
+    files->DownloadFile("http://github.com/CrustySean/StarlionFiles/blob/main/subsdk0?raw=true", "/subsdk0");
+    files->~Downloader();
+}
+*/
 int main(int argc, char **argv)
 {
 
@@ -160,15 +153,19 @@ int main(int argc, char **argv)
     
     printInfo();
 
-    while(appletMainLoop())
-    {
-        hidScanInput();
-        u64 kDown = hidKeysDown(CONTROLLER_P1_AUTO);
-
-        if (kDown & KEY_PLUS) break;
-        if (kDown & KEY_B) break;
-        if (kDown & KEY_Y) BCATinstaller();
-        if (kDown & KEY_X) BackupNews();
+    PadState pad;
+    padConfigureInput(1, HidNpadStyleSet_NpadStandard);
+    padInitializeDefault(&pad);
+    while (appletMainLoop()) {
+        padUpdate(&pad);
+        if (padGetButtonsDown(&pad) & HidNpadButton_Plus)
+            break;
+        if (padGetButtonsDown(&pad) & HidNpadButton_B)
+            break;
+        if (padGetButtonsDown(&pad) & HidNpadButton_Y)
+            BCATinstaller();
+        if (padGetButtonsDown(&pad) & HidNpadButton_X)
+            BackupNews();
         consoleUpdate(NULL);
     }
 

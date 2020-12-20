@@ -4,6 +4,8 @@ This code was taken from https://github.com/skyline-dev/eiffel/blob/master/sourc
 
 #include "log.hpp"
 
+#define DEBUG_LOG_FILE
+
 #ifdef NDEBUG
 void __libnx_exception_handler(ThreadExceptionDump* ctx) {}
 void debugInit() {}
@@ -37,8 +39,8 @@ extern struct in_addr __nxlink_host;
 
 void debugInit() {
 #ifdef DEBUG_LOG_FILE
-    std::string logName = "sdmc:/eiffel" + std::to_string(currentTime) + ".log";  // TODO: better log location
-    g_debug_file = fopen(logName.c_str(), "w");
+    std::string logName = "sdmc:/LOGS" ".log";  // TODO: better log location
+    g_debug_file = fopen(logName.c_str(), "w"); // g_debug_file = fopen(logName.c_str(), "w+a"); ???
     if (g_debug_file == NULL) fatalThrow(0xf);
 #endif
 

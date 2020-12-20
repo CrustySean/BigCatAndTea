@@ -9,6 +9,8 @@
 
 #include "log.hpp"
 
+#define DEBUG_LOG_FILE
+
 extern "C" {
 extern u32 __start__;
 
@@ -48,6 +50,15 @@ void __appInit(void)
     if (R_FAILED(rc))
         fatalThrow(MAKERESULT(Module_Libnx, LibnxError_InitFail_FS));
 
+    auto socketConfig = SocketInitConfig{.bsdsockets_version = 1,
+                                             .tcp_tx_buf_size = 0x800,
+                                             .tcp_rx_buf_size = 0x1000,
+                                             .tcp_tx_buf_max_size = 0,
+                                             .tcp_rx_buf_max_size = 0,
+                                             .udp_tx_buf_size = 0x2400,
+                                             .udp_rx_buf_size = 0xA500,
+                                             .sb_efficiency = 1};
+
     fsdevMountSdmc();
 
     debugInit();
@@ -62,6 +73,7 @@ void __appExit(void)
     fsExit();
     newsExit();
     smExit();
+    socketExit();
 }
 
 int main(int argc, char* argv[])

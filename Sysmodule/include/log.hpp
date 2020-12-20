@@ -4,6 +4,8 @@ This code was taken from https://github.com/skyline-dev/eiffel/blob/master/sourc
 
 #pragma once
 
+#include <switch.h>
+
 #define _STRINGIFY(x) #x
 #define STRINGIFY(x) _STRINGIFY(x)
 

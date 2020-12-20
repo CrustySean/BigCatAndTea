@@ -32,8 +32,8 @@ include $(DEVKITPRO)/libnx/switch_rules
 #---------------------------------------------------------------------------------
 
 APP_TITLE	:=	BigCatAndTea -- Dev Version 
-APP_AUTHOR	:=	CrustySeanPro, Behemoth & WerWolv
-APP_VERSION	:=	1.0.0
+APP_AUTHOR	:=	CrustySeanPro & Behemoth
+APP_VERSION	:=	DEV
 
 TARGET		:=	$(notdir $(CURDIR))
 BUILD		:=	build
@@ -53,12 +53,13 @@ CFLAGS	:=	-g -Wall -O2 -ffunction-sections \
 
 CFLAGS	+=	$(INCLUDE) -D__SWITCH__
 
-CXXFLAGS	:= $(CFLAGS) -fno-rtti -fno-exceptions -fexceptions -std=c++17
+CXXFLAGS	:= $(CFLAGS) -fno-rtti -fno-exceptions -fexceptions -std=gnu++17
 
 ASFLAGS	:=	-g $(ARCH)
 LDFLAGS	=	-specs=$(DEVKITPRO)/libnx/switch.specs -g $(ARCH) -Wl,-Map,$(notdir $*.map)
 
 LIBS	:= -lnx
+LIBS    += `curl-config --libs`
 
 #---------------------------------------------------------------------------------
 # list of directories containing libraries, this must be the top level containing
